@@ -1,8 +1,12 @@
 # dufs-material-assets
 
-[![CI](https://github.com/TransparentLC/dufs-material-assets/actions/workflows/ci.yml/badge.svg)](https://github.com/TransparentLC/dufs-material-assets/actions/workflows/ci.yml) [<picture><source media="(prefers-color-scheme:dark)" srcset="https://notbyai.fyi/img/developed-by-human-not-by-ai-black-cn.svg"><img src="https://notbyai.fyi/img/developed-by-human-not-by-ai-white-cn.svg" alt="Not By AI" height="20"></picture>](https://notbyai.fyi/)
+[![CI](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/ci.yml/badge.svg)](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/ci.yml) [![Pages](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/pages.yml/badge.svg)](https://nimbly8836.github.io/dufs-material-assets/) [![Release](https://img.shields.io/github/v/release/Nimbly8836/dufs-material-assets)](https://github.com/Nimbly8836/dufs-material-assets/releases)
 
 [dufs](https://github.com/sigoden/dufs) 的 Material Design 风格自定义前端界面。
+
+**在线演示：<https://nimbly8836.github.io/dufs-material-assets/>**（只读，部署在 GitHub Pages 上，由 GitHub Actions 自动构建）
+
+> 本仓库 fork 自 [TransparentLC/dufs-material-assets](https://github.com/TransparentLC/dufs-material-assets)，在其基础上调整了界面风格（简约配色、浅色/深色切换及动画、代码查看与编辑器高亮等）。这些修改在 AI 辅助下完成。
 
 使用 Vue 3 + Vuetify 构建，部分设计参考 [Cloudreve](https://github.com/cloudreve/Cloudreve)，添加了一些额外的功能。
 
@@ -69,17 +73,20 @@
     * 适用于目录内有上千个文件的情况
     * 默认不启用，可以通过[“自定义界面”](#自定义界面)启用
 * 多语言支持✨
-    * 已支持的语言或添加翻译请参见 [`src/i18n.js`](https://github.com/TransparentLC/dufs-material-assets/blob/master/src/i18n.js)
+    * 已支持的语言或添加翻译请参见 [`src/i18n.js`](https://github.com/Nimbly8836/dufs-material-assets/blob/master/src/i18n.js)
 
 ## 使用方法
 
-从 [GitHub Actions](https://github.com/TransparentLC/dufs-material-assets/actions) 或 [nightly.link](https://nightly.link/TransparentLC/dufs-material-assets/workflows/ci/master) 下载前端资源后，假定保存在 `dufs-material-assets` 目录，在启动 dufs 时添加参数 `--assets dufs-material-assets`。
+从 [Releases](https://github.com/Nimbly8836/dufs-material-assets/releases) 下载 `dufs-material-assets-<版本>.zip` 并解压，得到 `dufs-material-assets` 目录，在启动 dufs 时添加参数 `--assets dufs-material-assets`。
 
-也可以自己构建前端资源。
+每次推送 `v*` 格式的 tag（例如 `v1.0.0`）都会由 [Release 工作流](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/release.yml) 自动构建并发布 Release，附带两个文件：
 
-如果不想单独保存这个项目的前端资源和在每次启动 dufs 时设定 `--assets` 参数，在 Actions 里面也有编译好的、嵌入了这个项目的前端资源（替换了原版的前端资源）的 dufs [二进制文件](https://github.com/TransparentLC/dufs-material-assets/actions/workflows/build-embed.yml)，不过以这种方式使用将无法自定义界面。
+* `dufs-material-assets-<版本>.zip`：用于 `--assets` 参数的前端资源
+* `dufs-material-assets-embed-<版本>.zip`：文件名固定为 `index.html`/`index.js`/`index.css`，用于替换 dufs 源码中的 `assets/` 后自行编译
 
-[Releases](https://github.com/TransparentLC/dufs-material-assets/releases) 会在 dufs 发布新版本时更新，版本号和 dufs 一致，但不一定是这个项目的最新版本。
+master 分支的最新构建也可以从 [GitHub Actions](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/ci.yml) 或 [nightly.link](https://nightly.link/Nimbly8836/dufs-material-assets/workflows/ci/master) 下载。也可以自己构建前端资源。
+
+如果不想单独保存这个项目的前端资源和在每次启动 dufs 时设定 `--assets` 参数，可以手动运行 [Build dufs with embed assets](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/build-embed.yml) 工作流，编译嵌入了这个项目前端资源（替换了原版的前端资源）的 dufs 二进制文件，不过以这种方式使用将无法自定义界面。
 
 如果你使用过 dufs 原版的前端资源，然后切换到这个项目的前端资源重新运行，打开网页时可能会出现“No data”的提示，这是因为你的浏览器仍然在使用缓存的原版前端资源的 `index.js`，清除缓存后刷新即可（例如使用 <kbd>Ctrl+F5</kbd>）。
 
@@ -91,6 +98,10 @@
 pnpm run dev
 pnpm run dufs-api
 ```
+
+开发服务器会把 `/prefix/` 下的 API 请求代理到 `http://localhost:5000`，可以用环境变量 `DUFS_API_TARGET` 修改（例如 macOS 上 5000 端口被“隔空播放接收器”占用时）。
+
+在线演示使用 `pnpm run build:demo` 构建到 `dist-demo/`：它会复制仓库中的部分文件作为示例内容，并为每个目录生成 dufs 格式的 JSON 列表，因此不需要 dufs 服务端。演示站是只读的，上传、删除、搜索、打包下载等功能不可用。
 
 为了方便适配各个功能，`dufs-api` 固定了一些启动 dufs 的参数，与代码中仅在开发模式下会运行的部分对应。
 
