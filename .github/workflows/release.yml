@@ -1,0 +1,58 @@
+name: Release
+
+# Push a tag such as `v1.0.0` to build the assets and publish a GitHub Release.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: latest
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: "**/package.json"
+      - name: Install dependencies
+        run: pnpm install
+
+      # For `dufs --assets <dir>`.
+      # Zipped with a top-level `dufs-material-assets/` folder.
+      - name: Build assets
+        run: |
+          pnpm run build
+          rm -rf release && mkdir -p release/dufs-material-assets
+          cp -r dist/. release/dufs-material-assets/
+          out="$PWD/dufs-material-assets-${GITHUB_REF_NAME}.zip"
+          (cd release && zip -qr "$out" dufs-material-assets)
+
+      # Fixed filenames (index.html/index.js/index.css)
+      # for embedding into a dufs build.
+      - name: Build embed assets
+        run: |
+          DUFS_EMBED_FILENAME=1 pnpm run build
+          out="$PWD/dufs-material-assets-embed-${GITHUB_REF_NAME}.zip"
+          (cd dist && zip -qr "$out" .)
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dufs-material-assets-${GITHUB_REF_NAME}.zip" \
+            "dufs-material-assets-embed-${GITHUB_REF_NAME}.zip" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag

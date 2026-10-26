@@ -41,6 +41,7 @@ import app from './app.vue';
 import renderer from './marked-renderer.js';
 import dialog from './plugins/dialog.js';
 import snackbar from './plugins/snackbar.js';
+import { installDemoFetch } from './demo.js';
 
 import './markdown-style.css';
 import './theme.css';
@@ -58,6 +59,8 @@ marked.use(markedHighlight({
     },
 }));
 marked.use({ renderer });
+
+if (window.__DUFS_DEMO__) installDemoFetch();
 
 createApp(app)
     .use(router)
