@@ -734,7 +734,6 @@
                     @click="previewDialog = false"
                 ></v-btn>
             </v-card-title>
-            <v-divider></v-divider>
             <v-card-text
                 v-if="previewMode === 'image'"
                 class="py-4"
@@ -1042,7 +1041,6 @@
                     @click="editDialog = false"
                 ></v-btn>
             </v-card-title>
-            <v-divider></v-divider>
             <v-skeleton-loader
                 :loading="editSkeleton"
                 type="paragraph, subtitle, sentences"
