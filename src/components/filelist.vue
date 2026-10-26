@@ -681,7 +681,7 @@
         width="min(960px, calc(100vw - 32px))"
     >
         <v-card :style="glassmorphism.preview">
-            <v-card-title class="d-flex align-center">
+            <v-card-title class="d-flex align-center dialog-title">
                 <v-icon
                     :color="getColorFromExt(previewItem.ext)"
                     :icon="getIconFromExt(previewItem.ext)"
@@ -699,6 +699,7 @@
                     )"
                     variant="plain"
                     icon="$mdiSquareEditOutline"
+                    class="dialog-action dialog-action--square"
                     density="comfortable"
                     @click="
                         previewMode === 'image'
@@ -710,6 +711,7 @@
                     v-if="previewMode === 'image' || previewMode === 'video'"
                     variant="plain"
                     icon="$mdiChevronLeft"
+                    class="dialog-action dialog-action--chevron"
                     density="comfortable"
                     @click="navigateMedia(-1)"
                 ></v-btn>
@@ -717,12 +719,14 @@
                     v-if="previewMode === 'image' || previewMode === 'video'"
                     variant="plain"
                     icon="$mdiChevronRight"
+                    class="dialog-action dialog-action--chevron"
                     density="comfortable"
                     @click="navigateMedia(1)"
                 ></v-btn>
                 <v-btn
                     variant="plain"
                     icon="$mdiDownload"
+                    class="dialog-action dialog-action--download"
                     density="comfortable"
                     :href="previewItem.fullpath"
                     :download="previewItem.filename"
@@ -730,6 +734,7 @@
                 <v-btn
                     variant="plain"
                     icon="$mdiClose"
+                    class="dialog-action dialog-action--close"
                     density="comfortable"
                     @click="previewDialog = false"
                 ></v-btn>
@@ -1013,7 +1018,7 @@
         :style="glassmorphism.preview"
     >
         <v-card>
-            <v-card-title class="d-flex align-center">
+            <v-card-title class="d-flex align-center dialog-title">
                 <v-icon
                     :color="getColorFromExt(editItem.ext)"
                     :icon="getIconFromExt(editItem.ext)"
@@ -1025,18 +1030,21 @@
                 <v-btn
                     variant="plain"
                     :icon="editWrap ? '$mdiFormatTextWrappingWrap' : '$mdiFormatTextWrappingOverflow'"
+                    class="dialog-action"
                     density="comfortable"
                     @click="editWrap = !editWrap"
                 ></v-btn>
                 <v-btn
                     variant="plain"
                     icon="$mdiContentSave"
+                    class="dialog-action dialog-action--square"
                     density="comfortable"
                     @click="saveEditContent"
                 ></v-btn>
                 <v-btn
                     variant="plain"
                     icon="$mdiClose"
+                    class="dialog-action dialog-action--close"
                     density="comfortable"
                     @click="editDialog = false"
                 ></v-btn>

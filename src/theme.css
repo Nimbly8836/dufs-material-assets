@@ -99,6 +99,31 @@ body {
     padding: 12px 16px 16px;
 }
 
+/*
+ * Dialog title actions. MDI glyphs fill very different parts of their 24px
+ * box (close 14x14, download 14x17, save 18x18, chevron 7x12), and Vuetify
+ * sized link-buttons and click-buttons differently, so the icons looked
+ * mismatched. Size every icon explicitly so the visible glyph is ~15px.
+ */
+.dialog-title .dialog-action .v-icon {
+    --dialog-icon: 22px;
+    width: var(--dialog-icon);
+    height: var(--dialog-icon);
+    font-size: var(--dialog-icon);
+}
+
+.dialog-title .dialog-action--close .v-icon {
+    --dialog-icon: 26px;
+}
+
+.dialog-title .dialog-action--square .v-icon {
+    --dialog-icon: 19px;
+}
+
+.dialog-title .dialog-action--chevron .v-icon {
+    --dialog-icon: 28px;
+}
+
 /* ---------- Code: one theme for README, Markdown, preview and editor ---------- */
 
 .v-theme--light {
