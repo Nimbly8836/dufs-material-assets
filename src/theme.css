@@ -261,8 +261,7 @@ pre[class*="language-"].line-numbers .line-numbers-rows {
 pre[class*="language-"] ::selection,
 code[class*="language-"] ::selection,
 pre[class*="language-"]::selection,
-code[class*="language-"]::selection,
-.code-editor::selection {
+code[class*="language-"]::selection {
     color: inherit;
     background: rgba(var(--v-theme-primary), .22);
     text-shadow: none;
@@ -280,18 +279,83 @@ code[class*="language-"]::selection,
     line-height: 1.65;
 }
 
+/* Editor: highlighted <pre> underneath a transparent-text <textarea>. */
 .code-editor {
-    display: block;
-    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
     background: rgb(var(--code-bg));
-    border: 1px solid rgb(var(--code-border)) !important;
+    border: 1px solid rgb(var(--code-border));
     border-radius: 10px;
-    caret-color: rgb(var(--v-theme-primary));
-    tab-size: 4;
 }
 
-.code-editor:focus {
-    border-color: rgba(var(--v-theme-primary), .5) !important;
+.code-editor:focus-within {
+    border-color: rgba(var(--v-theme-primary), .5);
+}
+
+/* Both layers must share identical metrics or the caret drifts from the text. */
+.code-editor__layer {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 12px 14px;
+    border: 0;
+    font: inherit;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: normal;
+    tab-size: 4;
+    /* Reserve the same scrollbar space in both layers so wrapping matches. */
+    scrollbar-gutter: stable;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-shadow: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.code-editor--nowrap .code-editor__layer {
+    white-space: pre;
+    overflow-wrap: normal;
+}
+
+/* Extra scroll room so the highlight layer can follow the textarea past its
+   horizontal scrollbar when lines don't wrap. */
+.code-editor--nowrap .code-editor__highlight {
+    padding-bottom: 32px;
+}
+
+.code-editor__highlight {
+    overflow: hidden;
+    pointer-events: none;
+    color: rgb(var(--code-fg));
+    background: transparent;
+}
+
+.code-editor__highlight code {
+    font: inherit;
+    color: inherit;
+    background: none;
+    padding: 0;
+    border: 0;
+}
+
+.code-editor__input {
+    overflow: auto;
+    resize: none;
+    outline: none;
+    background: transparent;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    caret-color: rgb(var(--code-fg));
+}
+
+.code-editor__input::selection {
+    background: rgba(var(--v-theme-primary), .25);
 }
 
 @media (max-width: 600px) {

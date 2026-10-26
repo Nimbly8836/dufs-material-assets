@@ -1050,17 +1050,12 @@
                 style="max-height:calc(100vh - 48px - 52px - 16px)"
             >
                 <v-card-text>
-                    <textarea
+                    <code-editor
                         v-model="editContent"
-                        :wrap="editWrap ? 'soft' : 'off'"
-                        class="code-editor"
-                        :style="{
-                            width: '100%',
-                            height: 'calc(100vh - 48px - 52px - 16px - 34px)',
-                            resize: 'none',
-                            outline: 'none',
-                        }"
-                    ></textarea>
+                        :ext="editItem.ext"
+                        :wrap="editWrap"
+                        style="height:calc(100vh - 48px - 52px - 16px - 34px)"
+                    ></code-editor>
                 </v-card-text>
             </v-skeleton-loader>
         </v-card>
@@ -1093,6 +1088,7 @@ import { useI18n } from 'petite-vue-i18n';
 import subsrt from 'subsrt';
 import * as jsmediatags from '../mami-chan/index.js';
 import Uploader from '../uploader.js';
+import CodeEditor from './code-editor.vue';
 import NotDefFont from '../assets/AND-Regular.woff2?inline';
 import {
     getExt,
