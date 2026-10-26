@@ -651,7 +651,7 @@
                     style="background-color:transparent"
                 >
                     <v-divider></v-divider>
-                    <v-card-text v-if="readmeRichMode" v-html="readmeContent" class="markdown-body w-100 py-0"></v-card-text>
+                    <v-card-text v-if="readmeRichMode" v-html="readmeContent" class="markdown-body w-100 py-4"></v-card-text>
                     <v-card-text v-else>
                         <pre class="my-0" style="white-space:pre-wrap;word-break:keep-all"><code v-html="readmeContent"></code></pre>
                     </v-card-text>
@@ -998,13 +998,10 @@
                 <v-card-text
                     v-if="previewItem.ext === 'md' || codeLanguageTable[previewItem.ext]"
                     v-html="previewContent"
-                    class="pt-0 markdown-body code-preview"
-                    :class="{
-                        'pb-0': previewItem.ext !== 'md',
-                        'w-100': previewItem.ext === 'md',
-                    }"
+                    class="py-4 markdown-body code-preview"
+                    :class="{ 'w-100': previewItem.ext === 'md' }"
                 ></v-card-text>
-                <v-card-text v-else class="py-0 markdown-body code-preview">
+                <v-card-text v-else class="py-4 markdown-body code-preview">
                     <pre style="white-space:pre-wrap;word-break:keep-all"><code>{{ previewContent }}</code></pre>
                 </v-card-text>
             </v-skeleton-loader>

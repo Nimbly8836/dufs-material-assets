@@ -169,6 +169,15 @@ pre[class*="language-"],
     margin: 0;
 }
 
+/* Keep spacing inside cards/dialogs even: the container padding defines the gap. */
+.markdown-body > :first-child {
+    margin-top: 0 !important;
+}
+
+.markdown-body > :last-child {
+    margin-bottom: 0 !important;
+}
+
 .token.comment,
 .token.prolog,
 .token.doctype,
