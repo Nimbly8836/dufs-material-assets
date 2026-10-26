@@ -62,8 +62,63 @@ matchDark.addEventListener('change', e => systemIsDark.value = e.matches);
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
+const WIPE_DURATION = 820;
+const WIPE_FRAMES = 24;
+const WIPE_BAND_WIDTH = 110;
+const COS30 = Math.cos(Math.PI / 6);
+
 /**
- * Switch theme with a circular reveal from the toggle button. Falls back to an
+ * Keyframes for a "lane wipe": the viewport is cut into stripes tilted 30deg.
+ * The stripe under the toggle opens first and the rest follow outwards; each
+ * stripe widens from its centre line with an ease-out curve.
+ *
+ * Coordinates use a rotated basis: `across` runs perpendicular to the stripes
+ * (direction (1/2, cos30)) and `along` runs with them (direction (cos30, -1/2)).
+ * @param {number} originX
+ * @param {number} originY
+ * @returns {string[]} clip-path polygons
+ */
+const laneWipeFrames = (originX, originY) => {
+    const w = innerWidth;
+    const h = innerHeight;
+    const toScreen = (across, along) =>
+        `${(across * 0.5 + along * COS30).toFixed(1)}px ${(across * COS30 - along * 0.5).toFixed(1)}px`;
+
+    // Extent of the viewport in the rotated basis (corners projected onto each axis).
+    const acrossSpan = w * 0.5 + h * COS30;
+    const alongStart = -h * 0.5 - 2;
+    const alongEnd = w * COS30 + 2;
+
+    const bands = Math.max(6, Math.round(acrossSpan / WIPE_BAND_WIDTH));
+    const pitch = acrossSpan / bands;
+    const originBand = Math.min(bands - 1, Math.floor((originX * 0.5 + originY * COS30) / pitch));
+    // Delay per band of distance, so the farthest band starts halfway through.
+    const stagger = 0.5 / Math.max(originBand, bands - 1 - originBand, 1);
+    const easeOutCubic = t => 1 - (1 - t) ** 3;
+
+    const frames = [];
+    for (let f = 0; f <= WIPE_FRAMES; f++) {
+        const t = f / WIPE_FRAMES;
+        const points = [];
+        for (let b = 0; b < bands; b++) {
+            const local = Math.min(Math.max((t - Math.abs(b - originBand) * stagger) * 2, 0), 1);
+            // +1px overlap so neighbouring stripes leave no hairline gaps.
+            const half = (pitch / 2 + 1) * easeOutCubic(local);
+            const centre = (b + 0.5) * pitch;
+            points.push(
+                toScreen(centre - half, alongStart),
+                toScreen(centre - half, alongEnd),
+                toScreen(centre + half, alongEnd),
+                toScreen(centre + half, alongStart),
+            );
+        }
+        frames.push(`polygon(${points.join(', ')})`);
+    }
+    return frames;
+};
+
+/**
+ * Switch theme with a lane wipe from the toggle button. Falls back to an
  * instant switch without the View Transitions API or when reduced motion is on.
  * @param {MouseEvent} e
  */
@@ -78,7 +133,7 @@ const toggleTheme = async e => {
     const rect = e?.currentTarget?.getBoundingClientRect();
     const x = rect ? rect.left + rect.width / 2 : innerWidth;
     const y = rect ? rect.top + rect.height / 2 : 0;
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const frames = laneWipeFrames(x, y);
 
     const transition = document.startViewTransition(async () => {
         apply();
@@ -86,9 +141,10 @@ const toggleTheme = async e => {
         await nextTick();
     });
     await transition.ready;
+    // Easing is baked into the frames, so play them linearly.
     document.documentElement.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-        { duration: 450, easing: 'cubic-bezier(.4, 0, .2, 1)', pseudoElement: '::view-transition-new(root)' },
+        { clipPath: frames },
+        { duration: WIPE_DURATION, easing: 'linear', pseudoElement: '::view-transition-new(root)' },
     );
 };
 
