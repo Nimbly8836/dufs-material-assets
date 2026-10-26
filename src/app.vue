@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useTheme } from 'vuetify';
 import { marked, Renderer } from 'marked';
 import { pathPrefix, dufsVersion } from './common.js';
@@ -60,9 +60,36 @@ const themePreference = ref(['system', 'light', 'dark'].includes(savedTheme) ? s
 const isDark = computed(() => themePreference.value === 'dark' || (themePreference.value === 'system' && systemIsDark.value));
 matchDark.addEventListener('change', e => systemIsDark.value = e.matches);
 
-const toggleTheme = () => {
-    themePreference.value = isDark.value ? 'light' : 'dark';
-    localStorage.setItem('dufs-theme', themePreference.value);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+/**
+ * Switch theme with a circular reveal from the toggle button. Falls back to an
+ * instant switch without the View Transitions API or when reduced motion is on.
+ * @param {MouseEvent} e
+ */
+const toggleTheme = async e => {
+    const apply = () => {
+        themePreference.value = isDark.value ? 'light' : 'dark';
+        localStorage.setItem('dufs-theme', themePreference.value);
+    };
+    if (!document.startViewTransition || reduceMotion.matches) return apply();
+
+    // Use the button centre so keyboard activation (clientX/Y = 0) also works.
+    const rect = e?.currentTarget?.getBoundingClientRect();
+    const x = rect ? rect.left + rect.width / 2 : innerWidth;
+    const y = rect ? rect.top + rect.height / 2 : 0;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const transition = document.startViewTransition(async () => {
+        apply();
+        // Let the isDark watcher switch the Vuetify theme and re-render first.
+        await nextTick();
+    });
+    await transition.ready;
+    document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 450, easing: 'cubic-bezier(.4, 0, .2, 1)', pseudoElement: '::view-transition-new(root)' },
+    );
 };
 
 const title = window.__DUFS_MATERIAL_CONFIG__?.page?.title === undefined ? (location.host + decodeURIComponent(pathPrefix === '/' ? '' : pathPrefix)) : window.__DUFS_MATERIAL_CONFIG__?.page?.title;

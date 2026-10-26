@@ -9,6 +9,14 @@ body {
     background: rgb(var(--v-theme-background));
 }
 
+/* Theme toggle: replace the default cross-fade with the circular reveal
+   driven from app.vue. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
 .v-application {
     background: rgb(var(--v-theme-background));
 }
