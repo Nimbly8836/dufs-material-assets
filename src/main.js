@@ -43,6 +43,7 @@ import dialog from './plugins/dialog.js';
 import snackbar from './plugins/snackbar.js';
 
 import './markdown-style.css';
+import './theme.css';
 
 marked.use(markedHighlight({
     highlight(code, lang) {

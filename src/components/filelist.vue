@@ -150,7 +150,7 @@
         </v-tooltip>
     </Teleport>
 
-    <v-card class="my-4" :style="glassmorphism.filelist">
+    <v-card class="my-4 filelist-card" :style="glassmorphism.filelist">
         <div class="d-flex flex-column flex-sm-row align-sm-center">
             <v-breadcrumbs :items="breadcrumb" class="flex-grow-1 overflow-x-auto my-0 py-2 py-sm-4">
                 <template v-slot:divider>
@@ -201,6 +201,7 @@
                 }"
             >
                 <v-text-field
+                    class="filelist-search"
                     v-model="search"
                     density="compact"
                     variant="outlined"
@@ -220,7 +221,7 @@
             style="background-color:transparent"
         >
             <v-table
-                class="w-100"
+                class="w-100 filelist-table"
                 :class="{'overflow-x-auto': display.xs.value}"
                 style="font-size:1rem;background-color:transparent"
             >
@@ -631,7 +632,7 @@
         </v-skeleton-loader>
     </v-card>
 
-    <v-card v-if="readmeItem" class="my-4" :style="glassmorphism.readme">
+    <v-card v-if="readmeItem" class="my-4 filelist-card readme-card" :style="glassmorphism.readme">
         <v-card-title class="d-flex align-center text-body-large">
             <v-icon icon="$mdiBookOpenVariant" size="small" class="mr-2"></v-icon>
             <span class="flex-grow-1">{{ readmeItem.filename }}</span>
@@ -997,13 +998,13 @@
                 <v-card-text
                     v-if="previewItem.ext === 'md' || codeLanguageTable[previewItem.ext]"
                     v-html="previewContent"
-                    class="pt-0 markdown-body"
+                    class="pt-0 markdown-body code-preview"
                     :class="{
                         'pb-0': previewItem.ext !== 'md',
                         'w-100': previewItem.ext === 'md',
                     }"
                 ></v-card-text>
-                <v-card-text v-else class="py-0 markdown-body">
+                <v-card-text v-else class="py-0 markdown-body code-preview">
                     <pre style="white-space:pre-wrap;word-break:keep-all"><code>{{ previewContent }}</code></pre>
                 </v-card-text>
             </v-skeleton-loader>
@@ -1055,7 +1056,13 @@
                     <textarea
                         v-model="editContent"
                         :wrap="editWrap ? 'soft' : 'off'"
-                        style="font-family:ui-monospace,'Cascadia Mono','JetBrains Mono','Segoe UI Mono','Liberation Mono',Menlo,Monaco,Consolas,sans-serif;width:100%;height:calc(100vh - 48px - 52px - 16px - 34px);resize:none;border:none;outline:none;font-size:1rem"
+                        class="code-editor"
+                        :style="{
+                            width: '100%',
+                            height: 'calc(100vh - 48px - 52px - 16px - 34px)',
+                            resize: 'none',
+                            outline: 'none',
+                        }"
                     ></textarea>
                 </v-card-text>
             </v-skeleton-loader>
@@ -1383,8 +1390,19 @@ const updatePreviewContent = async () => {
         );
         const lang = skipHighlight ? 'plain' : codeLanguageTable[previewItem.value.ext];
         if (lang && prism.languages[lang]) {
-            previewContent.value = `<pre class="line-numbers language-${lang} w-100" style="background:none"><code class="language-${lang}">${prism.highlight(r, prism.languages[lang], lang)}</code></pre>`;
-            nextTick(() => prism.highlightAll());
+            const highlighted = prism.highlight(r, prism.languages[lang], lang);
+            previewContent.value = `<pre class="line-numbers language-${lang} w-100" style="background:none"><code class="language-${lang}">${highlighted}</code></pre>`;
+            nextTick(() => {
+                prism.highlightAll();
+                // Prism leaves server-side template directives as plain text.
+                // Add the class after Prism's second pass so it is not discarded.
+                document.querySelectorAll(`.code-preview code.language-${lang}`).forEach(code => {
+                    code.innerHTML = code.innerHTML.replace(
+                        /(&lt;%[\s\S]*?%&gt;)/g,
+                        '<span class="template-directive">$1</span>',
+                    );
+                });
+            });
         } else {
             previewContent.value = r;
         }

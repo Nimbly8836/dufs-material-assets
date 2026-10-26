@@ -1,0 +1,301 @@
+/* A restrained visual layer on top of Vuetify's components. */
+html,
+body,
+#app {
+    min-height: 100%;
+}
+
+body {
+    background: rgb(var(--v-theme-background));
+}
+
+.v-application {
+    background: rgb(var(--v-theme-background));
+}
+
+.app-shell-bar {
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), .08) !important;
+    box-shadow: none !important;
+}
+
+.app-shell-bar .v-toolbar__content {
+    padding-inline: 12px;
+}
+
+.app-shell-bar .v-toolbar-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+}
+
+.app-shell-container {
+    max-width: 1120px !important;
+    padding-top: 20px;
+    padding-bottom: 8px;
+}
+
+.app-shell-footer {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    opacity: .72;
+}
+
+.filelist-card {
+    overflow: hidden;
+    border: 1px solid rgba(var(--v-theme-on-surface), .08) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .045) !important;
+}
+
+.filelist-card .v-breadcrumbs {
+    padding-inline: 16px;
+}
+
+.filelist-search .v-field {
+    border-radius: 10px;
+}
+
+.filelist-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.filelist-table thead tr {
+    background: rgba(var(--v-theme-on-surface), .025);
+}
+
+.filelist-table th {
+    height: 42px !important;
+    color: rgba(var(--v-theme-on-surface), .62) !important;
+    font-size: .74rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.filelist-table td {
+    height: 56px !important;
+    border-bottom-color: rgba(var(--v-theme-on-surface), .07) !important;
+}
+
+.filelist-table tbody tr {
+    transition: background-color 120ms ease;
+}
+
+.filelist-table tbody tr:hover {
+    background: rgba(var(--v-theme-primary), .045) !important;
+}
+
+.filelist-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.v-btn {
+    border-radius: 9px;
+}
+
+.v-card-actions {
+    padding: 12px 16px 16px;
+}
+
+/* ---------- Code: one theme for README, Markdown, preview and editor ---------- */
+
+.v-theme--light {
+    --code-fg: 30, 41, 59;
+    --code-bg: 248, 250, 252;
+    --code-border: 226, 232, 240;
+    --code-gutter: 148, 163, 184;
+    --code-comment: 100, 116, 139;
+    --code-punctuation: 71, 85, 105;
+    --code-tag: 190, 24, 93;
+    --code-string: 4, 120, 87;
+    --code-keyword: 29, 78, 216;
+    --code-function: 194, 65, 12;
+    --code-variable: 180, 83, 9;
+    --code-template: 157, 23, 77;
+}
+
+.v-theme--dark {
+    --code-fg: 226, 232, 240;
+    --code-bg: 15, 18, 24;
+    --code-border: 45, 52, 64;
+    --code-gutter: 100, 116, 139;
+    --code-comment: 148, 163, 184;
+    --code-punctuation: 203, 213, 225;
+    --code-tag: 244, 114, 182;
+    --code-string: 110, 231, 183;
+    --code-keyword: 147, 197, 253;
+    --code-function: 251, 146, 60;
+    --code-variable: 253, 186, 116;
+    --code-template: 244, 114, 182;
+}
+
+/* Override prism.css defaults (black text, white text-shadow) for every code block. */
+code,
+kbd,
+pre,
+samp,
+code[class*="language-"],
+pre[class*="language-"],
+.code-editor {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+code[class*="language-"],
+pre[class*="language-"],
+.code-editor {
+    color: rgb(var(--code-fg));
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.65;
+    text-shadow: none !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+pre[class*="language-"],
+.markdown-body pre {
+    margin: 1em 0;
+    padding: 14px 16px;
+    color: rgb(var(--code-fg));
+    background: rgb(var(--code-bg)) !important;
+    border: 1px solid rgb(var(--code-border));
+    border-radius: 10px;
+}
+
+.code-preview > pre,
+.code-preview > pre[class*="language-"] {
+    margin: 0;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: rgb(var(--code-comment));
+    font-style: normal;
+}
+
+.token.punctuation {
+    color: rgb(var(--code-punctuation));
+}
+
+.token.namespace {
+    opacity: .8;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: rgb(var(--code-tag));
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: rgb(var(--code-string));
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: rgb(var(--code-punctuation));
+    background: transparent;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: rgb(var(--code-keyword));
+}
+
+.token.function,
+.token.class-name {
+    color: rgb(var(--code-function));
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: rgb(var(--code-variable));
+}
+
+.token.important,
+.token.bold {
+    font-weight: 600;
+}
+
+.template-directive {
+    color: rgb(var(--code-template)) !important;
+}
+
+/* Line numbers */
+pre[class*="language-"].line-numbers .line-numbers-rows {
+    border-right-color: rgb(var(--code-border));
+}
+
+.line-numbers-rows > span:before {
+    color: rgb(var(--code-gutter)) !important;
+}
+
+/* Selection */
+pre[class*="language-"] ::selection,
+code[class*="language-"] ::selection,
+pre[class*="language-"]::selection,
+code[class*="language-"]::selection,
+.code-editor::selection {
+    color: inherit;
+    background: rgba(var(--v-theme-primary), .22);
+    text-shadow: none;
+}
+
+/* Plain-text preview and editor */
+.code-preview pre:not([class*="language-"]) {
+    margin: 0;
+    padding: 14px 16px;
+    color: rgb(var(--code-fg));
+    background: rgb(var(--code-bg));
+    border: 1px solid rgb(var(--code-border));
+    border-radius: 10px;
+    font-size: .875rem;
+    line-height: 1.65;
+}
+
+.code-editor {
+    display: block;
+    padding: 12px 14px;
+    background: rgb(var(--code-bg));
+    border: 1px solid rgb(var(--code-border)) !important;
+    border-radius: 10px;
+    caret-color: rgb(var(--v-theme-primary));
+    tab-size: 4;
+}
+
+.code-editor:focus {
+    border-color: rgba(var(--v-theme-primary), .5) !important;
+}
+
+@media (max-width: 600px) {
+    .app-shell-container {
+        padding-top: 12px;
+        padding-inline: 12px;
+    }
+
+    .app-shell-footer {
+        padding-inline: 12px;
+    }
+
+    .filelist-card {
+        border-radius: 12px !important;
+    }
+}

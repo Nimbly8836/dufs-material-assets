@@ -6,6 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import fs from 'node:fs';
 
 const __IS_PROD__ = process.env.NODE_ENV === 'production';
+const __DUFS_API_TARGET__ = process.env.DUFS_API_TARGET || 'http://localhost:5000';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -77,7 +78,10 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/prefix/.+\..+?$': 'http://localhost:5000',
+            '^/prefix(?:/|$)': {
+                target: __DUFS_API_TARGET__,
+                bypass: req => req.headers.accept?.includes('text/html') ? req.url : undefined,
+            },
         },
     },
 });

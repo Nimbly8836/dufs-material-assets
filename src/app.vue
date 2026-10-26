@@ -5,19 +5,30 @@
         backgroundAttachment: 'fixed',
         backgroundSize: 'cover',
     } : undefined">
-        <v-app-bar color="primary" :style="glassmorphism">
+        <v-app-bar color="surface" class="app-shell-bar" :style="glassmorphism">
             <template v-slot:prepend>
                 <img v-if="logo" :src="logo" height="40" style="margin-left:20px">
             </template>
             <v-app-bar-title v-if="title">{{ title }}</v-app-bar-title>
 
             <template v-slot:append>
+                <v-tooltip :text="isDark ? '切换到浅色模式' : '切换到深色模式'">
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            variant="text"
+                            :icon="isDark ? '$mdiWhiteBalanceSunny' : '$mdiWeatherNight'"
+                            :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
+                            @click="toggleTheme"
+                        ></v-btn>
+                    </template>
+                </v-tooltip>
                 <div id="app-bar-append"></div>
             </template>
         </v-app-bar>
 
         <v-main>
-            <v-container style="max-width:1080px">
+            <v-container class="app-shell-container">
                 <router-view v-slot="{ Component }">
                     <keep-alive>
                         <component v-if="$route?.meta?.keepAlive" :is="Component" :key="$route.fullPath"></component>
@@ -31,7 +42,7 @@
             感谢你使用 dufs-material-assets！如果我看到有其他人也在使用的话会很开心的！
             因此希望你可以保留页脚的项目链接，它不会影响美观，同时也是对我（以及 dufs 的原作者）的鼓励和支持～
         -->
-        <footer class="text-body-small text-grey text-center mb-8" v-html="footer"></footer>
+        <footer class="app-shell-footer text-body-small text-grey text-center mb-8" v-html="footer"></footer>
     </v-app>
 </template>
 
@@ -43,8 +54,16 @@ import { pathPrefix, dufsVersion } from './common.js';
 import renderer from './marked-renderer.js';
 
 const matchDark = matchMedia('(prefers-color-scheme:dark)');
-const isDark = ref(matchDark.matches);
-matchDark.addEventListener('change', () => isDark.value = matchDark.matches);
+const systemIsDark = ref(matchDark.matches);
+const savedTheme = localStorage.getItem('dufs-theme');
+const themePreference = ref(['system', 'light', 'dark'].includes(savedTheme) ? savedTheme : 'light');
+const isDark = computed(() => themePreference.value === 'dark' || (themePreference.value === 'system' && systemIsDark.value));
+matchDark.addEventListener('change', e => systemIsDark.value = e.matches);
+
+const toggleTheme = () => {
+    themePreference.value = isDark.value ? 'light' : 'dark';
+    localStorage.setItem('dufs-theme', themePreference.value);
+};
 
 const title = window.__DUFS_MATERIAL_CONFIG__?.page?.title === undefined ? (location.host + decodeURIComponent(pathPrefix === '/' ? '' : pathPrefix)) : window.__DUFS_MATERIAL_CONFIG__?.page?.title;
 const logo = computed(() => {
@@ -75,7 +94,6 @@ Object.assign(footerRenderer, {
 const footer = marked.parse(`${window.__DUFS_MATERIAL_CONFIG__?.footer || ''}\n\nPowered by [dufs](https://github.com/sigoden/dufs) v${dufsVersion} & [dufs-material-assets](https://github.com/TransparentLC/dufs-material-assets)`, { renderer: footerRenderer });
 
 const theme = useTheme();
-theme.change(isDark.value ? 'dark' : 'light');
-watch(isDark, () => theme.change(isDark.value ? 'dark' : 'light'));
+watch(isDark, value => theme.change(value ? 'dark' : 'light'), { immediate: true });
 
 </script>

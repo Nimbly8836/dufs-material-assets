@@ -1,5 +1,6 @@
 .markdown-body {
     font-size: 1em;
+    line-height: 1.7;
 }
 
 .markdown-body h1,
@@ -45,44 +46,54 @@
 
 .markdown-body blockquote {
     padding-left: 1em;
-    border-left: 4px solid rgba(0,0,0,.12);
+    color: rgba(var(--v-theme-on-surface), .72);
+    border-left: 4px solid rgba(var(--v-theme-primary), .42);
 }
 
 .markdown-body pre {
-    background-color: rgba(0,0,0,.03);
-    border-radius: 4px;
+    background-color: rgba(var(--v-theme-on-surface), .035);
+    border: 1px solid rgba(var(--v-theme-on-surface), .08);
+    border-radius: 10px;
     overflow-x: auto;
     padding: .75em 1em;
 }
 
 .markdown-body :not(pre) > code {
-    padding: .2em .4em;
-    background-color: rgba(0,0,0,.03);
-    border-radius: 4px;
+    padding: .15em .4em;
+    font-size: .9em;
+    color: rgb(var(--v-theme-on-surface));
+    background-color: rgba(var(--v-theme-on-surface), .05);
+    border: 1px solid rgba(var(--v-theme-on-surface), .08);
+    border-radius: 6px;
 }
 
 .markdown-body hr {
     border: none;
-    border-bottom: 1px solid rgba(0,0,0,.12);
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), .12);
 }
 
 .markdown-body kbd {
     border-radius: 4px;
     padding: .1em .4em;
-    box-shadow: 1px 1px 1px #777;
     margin: .2em;
-    background: #eee;
-    color: #000;
-    cursor: pointer;
     font-size: small;
+    color: rgb(var(--v-theme-on-surface));
+    background: rgba(var(--v-theme-on-surface), .06);
+    border: 1px solid rgba(var(--v-theme-on-surface), .16);
+    box-shadow: inset 0 -1px 0 rgba(var(--v-theme-on-surface), .16);
+    cursor: pointer;
 }
 
 .markdown-body kbd:active {
-    box-shadow: 1px 1px 0 #ddd inset;
+    box-shadow: none;
 }
 
 .markdown-body img {
     max-width: 100%;
+}
+
+.v-theme--dark .markdown-body img.math {
+    filter: invert();
 }
 
 .markdown-body table {
@@ -94,43 +105,15 @@
 .markdown-body table td {
     padding: .5em;
 }
+
 .markdown-body table th,
 .markdown-body table tr:not(:last-child) td {
-    border-bottom: thin solid rgba(0,0,0,.12);
+    border-bottom: thin solid rgba(var(--v-theme-on-surface), .12);
 }
+
 .markdown-body table th {
-    font-weight: bold;
-    color: rgba(0,0,0,.6);
-}
-
-code, kbd, pre, samp,
-code[class*="language-"], pre[class*="language-"] {
-    font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Liberation Mono", Menlo, Monaco, Consolas, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-    .markdown-body pre,
-    .markdown-body :not(pre) > code {
-        background-color: rgba(255,255,255,.03);
-    }
-
-    .markdown-body kbd {
-        background-color: #333;
-        color: #fff;
-    }
-
-    .markdown-body img.math {
-        filter: invert();
-    }
-
-    .markdown-body blockquote {
-        border-left: 4px solid rgba(255,255,255,.12);
-    }
-
-    code[class*="language-"], pre[class*="language-"] {
-        color: #fff;
-        text-shadow: 0 1px #000;
-    }
+    font-weight: 600;
+    color: rgba(var(--v-theme-on-surface), .64);
 }
 
 .v-breadcrumbs-item--disabled {

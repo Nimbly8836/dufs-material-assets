@@ -92,6 +92,8 @@ import {
     mdiUpload,
     mdiVectorPolygon,
     mdiVideo,
+    mdiWeatherNight,
+    mdiWhiteBalanceSunny,
     mdiVuejs,
     mdiWindowRestore,
     mdiXml,
@@ -192,6 +194,8 @@ export default createVuetify({
             mdiUpload,
             mdiVectorPolygon,
             mdiVideo,
+            mdiWeatherNight,
+            mdiWhiteBalanceSunny,
             mdiVuejs,
             mdiWindowRestore,
             mdiXml,
@@ -213,17 +217,20 @@ export default createVuetify({
         themes: {
             light: {
                 colors: {
-                    primary: '#0288d1',
-                    secondary: '#00b0ff',
+                    background: '#f5f7fa',
+                    surface: '#ffffff',
+                    primary: '#2563eb',
+                    secondary: '#64748b',
                     ...(window.__DUFS_MATERIAL_CONFIG__?.theme?.light || {}),
                 },
             },
             dark: {
                 dark: true,
                 colors: {
-                    background: '#0f0f0f',
-                    primary: '#0288d1',
-                    secondary: '#00b0ff',
+                    background: '#111318',
+                    surface: '#181b22',
+                    primary: '#60a5fa',
+                    secondary: '#94a3b8',
                     ...(window.__DUFS_MATERIAL_CONFIG__?.theme?.dark || {}),
                 },
             },
