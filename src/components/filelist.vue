@@ -249,7 +249,7 @@
                                 ></v-icon>
                             </span>
                         </th>
-                        <th class="text-no-wrap text-right">
+                        <th class="text-no-wrap col-mtime">
                             <span
                                 style="cursor:pointer"
                                 @click="
@@ -271,7 +271,7 @@
                                 ></v-icon>
                             </span>
                         </th>
-                        <th class="text-no-wrap text-right">
+                        <th class="text-no-wrap col-size">
                             <span
                                 style="cursor:pointer"
                                 @click="
@@ -293,7 +293,7 @@
                                 ></v-icon>
                             </span>
                         </th>
-                        <th class="text-no-wrap text-right">{{ t('headerActions') }}</th>
+                        <th class="text-no-wrap text-right col-actions">{{ t('headerActions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -333,9 +333,9 @@
                                 ></v-icon>
                             </div>
                         </td>
-                        <td class="text-no-wrap text-right">{{ formatTimestamp(p.mtime) }}</td>
-                        <td class="text-no-wrap text-right">{{ p.is_dir ? t('headerSizeSubdirectoryItems', [p.size > 999 ? '>999' : p.size], p.size) : formatSize(p.size) }}</td>
-                        <td class="text-no-wrap text-right">
+                        <td class="text-no-wrap col-mtime">{{ formatTimestamp(p.mtime) }}</td>
+                        <td class="text-no-wrap col-size">{{ p.is_dir ? t('headerSizeSubdirectoryItems', [p.size > 999 ? '>999' : p.size], p.size) : formatSize(p.size) }}</td>
+                        <td class="text-no-wrap text-right col-actions">
                             <v-tooltip
                                 v-if="previewableImageExts.has(p.ext)"
                                 :text="t('actionViewImage')"
@@ -689,7 +689,6 @@
                 ></v-icon>
                 <span class="flex-grow-1 text-truncate" :title="previewItem.name">
                     {{ previewItem.filename }}
-                    <span class="d-none d-sm-inline">({{ formatSize(previewItem.size) }})</span>
                 </span>
                 <v-btn
                     v-if="externalViewer && (

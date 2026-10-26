@@ -91,6 +91,33 @@ body {
     border-bottom: 0;
 }
 
+/*
+ * Columns read left to right like the name column; only the action buttons
+ * stay right-aligned at the row end. Fixed widths keep columns from shifting
+ * between directories, and tabular digits give every timestamp the same width.
+ */
+.filelist-table .col-mtime {
+    width: 13em;
+    min-width: 13em;
+    font-variant-numeric: tabular-nums;
+}
+
+.filelist-table .col-size {
+    width: 8em;
+    min-width: 8em;
+    font-variant-numeric: tabular-nums;
+}
+
+.filelist-table .col-actions {
+    width: 1%;
+}
+
+/* Dialogs share the card radius. */
+.v-dialog > .v-overlay__content > .v-card,
+.v-dialog > .v-overlay__content > form > .v-card {
+    border-radius: 14px;
+}
+
 .v-btn {
     border-radius: 9px;
 }
