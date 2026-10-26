@@ -28,22 +28,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # For `dufs --assets <dir>`.
-      # Zipped with a top-level `dufs-material-assets/` folder.
+      # For `dufs --assets <dir>`: index.html, index.js, index.css and
+      # vite.svg at the zip root, so `unzip -d <dir>` is ready to use.
       - name: Build assets
         run: |
-          pnpm run build
-          rm -rf release && mkdir -p release/dufs-material-assets
-          cp -r dist/. release/dufs-material-assets/
+          DUFS_FLAT_ASSETS=1 pnpm run build
+          for f in index.html index.js index.css vite.svg; do
+            test -f "dist/$f" || { echo "missing dist/$f"; exit 1; }
+          done
           out="$PWD/dufs-material-assets-${GITHUB_REF_NAME}.zip"
-          (cd release && zip -qr "$out" dufs-material-assets)
-
-      # Fixed filenames (index.html/index.js/index.css)
-      # for embedding into a dufs build.
-      - name: Build embed assets
-        run: |
-          DUFS_EMBED_FILENAME=1 pnpm run build
-          out="$PWD/dufs-material-assets-embed-${GITHUB_REF_NAME}.zip"
           (cd dist && zip -qr "$out" .)
 
       - name: Publish release
@@ -52,7 +45,6 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" \
             "dufs-material-assets-${GITHUB_REF_NAME}.zip" \
-            "dufs-material-assets-embed-${GITHUB_REF_NAME}.zip" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes \
             --verify-tag

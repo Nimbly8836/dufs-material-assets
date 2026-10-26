@@ -82,7 +82,10 @@ export default defineConfig({
                     brotliSize: true,
                 }),
             ],
-            ...(process.env.DUFS_EMBED_FILENAME ? {
+            // Fixed, unhashed filenames next to index.html:
+            //   DUFS_EMBED_FILENAME  for compiling into dufs (favicon.ico from dufs)
+            //   DUFS_FLAT_ASSETS     for `dufs --assets <dir>` releases (keeps vite.svg)
+            ...(process.env.DUFS_EMBED_FILENAME || process.env.DUFS_FLAT_ASSETS ? {
                 output: {
                     entryFileNames: 'index.js',
                     assetFileNames: '[name][extname]',

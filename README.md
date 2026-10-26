@@ -77,12 +77,19 @@
 
 ## 使用方法
 
-从 [Releases](https://github.com/Nimbly8836/dufs-material-assets/releases) 下载 `dufs-material-assets-<版本>.zip` 并解压，得到 `dufs-material-assets` 目录，在启动 dufs 时添加参数 `--assets dufs-material-assets`。
+从 [Releases](https://github.com/Nimbly8836/dufs-material-assets/releases) 下载 `dufs-material-assets-<版本>.zip`，解压到一个目录（例如 `dufs-material-assets`），在启动 dufs 时添加参数 `--assets dufs-material-assets`。
 
-每次推送 `v*` 格式的 tag（例如 `v1.0.0`）都会由 [Release 工作流](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/release.yml) 自动构建并发布 Release，附带两个文件：
+压缩包里没有外层目录，解压后的结构如下：
 
-* `dufs-material-assets-<版本>.zip`：用于 `--assets` 参数的前端资源
-* `dufs-material-assets-embed-<版本>.zip`：文件名固定为 `index.html`/`index.js`/`index.css`，用于替换 dufs 源码中的 `assets/` 后自行编译
+```plain
+dufs-material-assets
+    index.html
+    index.js
+    index.css
+    vite.svg
+```
+
+每次推送 `v*` 格式的 tag（例如 `v1.0.0`）都会由 [Release 工作流](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/release.yml) 自动构建并发布 Release。
 
 master 分支的最新构建也可以从 [GitHub Actions](https://github.com/Nimbly8836/dufs-material-assets/actions/workflows/ci.yml) 或 [nightly.link](https://nightly.link/Nimbly8836/dufs-material-assets/workflows/ci/master) 下载。也可以自己构建前端资源。
 
