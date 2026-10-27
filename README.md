@@ -47,9 +47,10 @@
     * 数学公式渲染（使用 https://i.upmath.me/ 的 API 实现）
     * 支持渲染 Markdown 文件（使用 [Marked](https://marked.js.org/) 实现）
 * 本地文档预览✨
-    * 在浏览器里直接预览 Word（docx）、表格（xlsx、xls、ods、csv）、PSD 和 TIFF 文件，文件不会发送给第三方网站
-    * 分别使用 [docx-preview](https://github.com/VolodymyrBaydalka/docxjs)、[SheetJS](https://sheetjs.com/)、[ag-psd](https://github.com/Agamnentzar/ag-psd)、[UTIF.js](https://github.com/photopea/UTIF.js) 实现，按需加载
+    * 在浏览器里直接预览 Word（docx）、表格（xlsx、xls、ods、csv）、PowerPoint（pptx）、PSD 和 TIFF 文件，文件不会发送给第三方网站
+    * 分别使用 [docx-preview](https://github.com/VolodymyrBaydalka/docxjs)、[SheetJS](https://sheetjs.com/)、[pptx-preview](https://www.npmjs.com/package/pptx-preview)、[ag-psd](https://github.com/Agamnentzar/ag-psd)、[UTIF.js](https://github.com/photopea/UTIF.js) 实现，按需加载
     * 表格最多显示前 2000 行、200 列；PSD 显示合并后的预览图（需要保存时开启“最大兼容性”）
+    * pptx 支持文字、图片、形状和基本图表，不支持动画；复杂版式可能和 PowerPoint 有差异
     * 嵌入 dufs 二进制文件的版本不支持此功能
 * 文档预览✨
     * 支持在线查看 PDF 文件，docx、xlsx、pptx 等 Office 文档和 draw&period;io、VSDX 等图表
@@ -227,7 +228,7 @@ window.__DUFS_MATERIAL_CONFIG__ = {
     // 是否允许使用第三方服务查看文件（Microsoft Office Online、draw.io、Photopea）
     // 部署时需要满足对应条件，否则即使启用了也无法查看
     externalViewer: false,
-    // 是否在浏览器本地预览 docx、xlsx/xls/ods/csv、psd、tiff 文件，默认启用
+    // 是否在浏览器本地预览 docx、xlsx/xls/ods/csv、pptx、psd、tiff 文件，默认启用
     // 文件只会从 dufs 下载到当前浏览器解析，不会发送给任何第三方网站
     // 解析库放在前端资源的 assets 目录里，第一次预览对应格式时才会加载
     // 同时启用 externalViewer 时，这些格式优先使用本地预览

@@ -122,9 +122,27 @@ body {
 
 /* ---------- Local file previews (docx / spreadsheets / psd / tiff) ---------- */
 .local-preview {
+    flex: 1 1 auto;
     min-height: 120px;
     overflow: auto;
     border-radius: 10px;
+}
+
+/* pptx-preview: replace its black backdrop with the code-block surface. */
+.local-preview--pptx {
+    background: rgb(var(--code-bg));
+    border: 1px solid rgb(var(--code-border));
+}
+
+.local-preview--pptx .pptx-preview-wrapper {
+    padding: 16px 0 6px;
+    background: transparent !important;
+}
+
+.local-preview--pptx .pptx-preview-slide-wrapper {
+    margin-bottom: 16px !important;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .14);
 }
 
 .local-preview--sheet {

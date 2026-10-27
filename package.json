@@ -19,6 +19,7 @@
     "marked": "^18.1.1",
     "marked-highlight": "^2.2.4",
     "petite-vue-i18n": "^11.4.14",
+    "pptx-preview": "^1.0.7",
     "prismjs": "^1.30.0",
     "subsrt": "^1.1.1",
     "utif": "^3.1.0",

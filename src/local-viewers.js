@@ -6,12 +6,13 @@
  * and only downloaded the first time that format is previewed.
  */
 
-/** @typedef {'docx' | 'sheet' | 'psd' | 'tiff'} LocalPreviewType */
+/** @typedef {'docx' | 'sheet' | 'pptx' | 'psd' | 'tiff'} LocalPreviewType */
 
 /** @type {Record<LocalPreviewType, Set<string>>} */
 const EXTS = {
     docx: new Set(['docx', 'docm', 'dotx', 'dotm']),
     sheet: new Set(['xlsx', 'xlsm', 'xlsb', 'xls', 'ods', 'csv']),
+    pptx: new Set(['pptx', 'ppsx', 'potx', 'pptm', 'ppsm', 'potm']),
     psd: new Set(['psd']),
     tiff: new Set(['tif', 'tiff']),
 };
@@ -139,6 +140,19 @@ const renderSheet = async (buffer, el) => {
  * @param {ArrayBuffer} buffer
  * @param {HTMLElement} el
  */
+const renderPptx = async (buffer, el) => {
+    const { init } = await import('pptx-preview');
+    // Fit slides to the dialog (minus the 16px side padding from theme.css);
+    // height follows each slide's aspect ratio.
+    const width = Math.max(320, Math.floor((el.clientWidth || 880) - 32));
+    const previewer = init(el, { width, mode: 'list' });
+    await previewer.preview(buffer);
+};
+
+/**
+ * @param {ArrayBuffer} buffer
+ * @param {HTMLElement} el
+ */
 const renderPsd = async (buffer, el) => {
     const { readPsd } = await import('ag-psd');
     // Only the merged composite image is needed, not individual layers.
@@ -179,6 +193,7 @@ export const renderLocalPreview = async (type, buffer, el) => {
     switch (type) {
         case 'docx': return renderDocx(buffer, el);
         case 'sheet': return renderSheet(buffer, el);
+        case 'pptx': return renderPptx(buffer, el);
         case 'psd': return renderPsd(buffer, el);
         case 'tiff': return renderTiff(buffer, el);
     }

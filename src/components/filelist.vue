@@ -894,7 +894,7 @@
             </v-card-text>
             <v-card-text
                 v-else-if="previewMode === 'local'"
-                class="py-4 d-flex flex-column ga-3"
+                class="py-4 d-flex flex-column ga-3 overflow-hidden"
                 style="max-height:calc(100vh - 48px - 52px - 16px)"
             >
                 <v-tabs
