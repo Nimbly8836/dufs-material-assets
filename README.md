@@ -46,6 +46,11 @@
     * 代码高亮（使用 [prism](https://prismjs.com) 实现）
     * 数学公式渲染（使用 https://i.upmath.me/ 的 API 实现）
     * 支持渲染 Markdown 文件（使用 [Marked](https://marked.js.org/) 实现）
+* 本地文档预览✨
+    * 在浏览器里直接预览 Word（docx）、表格（xlsx、xls、ods、csv）、PSD 和 TIFF 文件，文件不会发送给第三方网站
+    * 分别使用 [docx-preview](https://github.com/VolodymyrBaydalka/docxjs)、[SheetJS](https://sheetjs.com/)、[ag-psd](https://github.com/Agamnentzar/ag-psd)、[UTIF.js](https://github.com/photopea/UTIF.js) 实现，按需加载
+    * 表格最多显示前 2000 行、200 列；PSD 显示合并后的预览图（需要保存时开启“最大兼容性”）
+    * 嵌入 dufs 二进制文件的版本不支持此功能
 * 文档预览✨
     * 支持在线查看 PDF 文件，docx、xlsx、pptx 等 Office 文档和 draw&period;io、VSDX 等图表
     * Office 文档查看使用 https://view.officeapps.live.com/op/view.aspx 实现，可以在线查看 10 MB 以内的文件
@@ -222,6 +227,13 @@ window.__DUFS_MATERIAL_CONFIG__ = {
     // 是否允许使用第三方服务查看文件（Microsoft Office Online、draw.io、Photopea）
     // 部署时需要满足对应条件，否则即使启用了也无法查看
     externalViewer: false,
+    // 是否在浏览器本地预览 docx、xlsx/xls/ods/csv、psd、tiff 文件，默认启用
+    // 文件只会从 dufs 下载到当前浏览器解析，不会发送给任何第三方网站
+    // 解析库放在前端资源的 assets 目录里，第一次预览对应格式时才会加载
+    // 同时启用 externalViewer 时，这些格式优先使用本地预览
+    localViewer: true,
+    // 本地预览的文件大小上限（单位 MB），超过时不显示本地预览按钮
+    localViewerMaxSize: 50,
     // 是否启用 polyfill 以支持查看 JPEG XL 格式的图片
     // 如果浏览器原生支持 JPEG XL（参见 https://caniuse.com/jpegxl）则不会有影响
     // 如果没有原生支持，启用后查看 JPEG XL 图片时会自动加载 polyfill（https://github.com/hjanuschka/jxl-rs-polyfill）

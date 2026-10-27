@@ -95,6 +95,9 @@ export default defineConfig({
     },
     define: {
         __IS_PROD__,
+        // The embedded build can only serve index.js/index.css, so lazily loaded
+        // chunks (local file viewers) are unavailable there.
+        __DUFS_EMBED__: Boolean(process.env.DUFS_EMBED_FILENAME),
         __BUILD_TIME__: `"${(new Date).toISOString()}"`,
         __VUE_VERSION__: `"Vue ${JSON.parse(fs.readFileSync('./node_modules/vue/package.json', {encoding: 'utf-8'})).version}"`,
         __VITE_VERSION__: `"Vite ${JSON.parse(fs.readFileSync('./node_modules/vite/package.json', {encoding: 'utf-8'})).version}"`,

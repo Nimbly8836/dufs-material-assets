@@ -120,6 +120,57 @@ body {
     width: 1%;
 }
 
+/* ---------- Local file previews (docx / spreadsheets / psd / tiff) ---------- */
+.local-preview {
+    min-height: 120px;
+    overflow: auto;
+    border-radius: 10px;
+}
+
+.local-preview--sheet {
+    border: 1px solid rgb(var(--code-border));
+}
+
+.local-preview__sheet {
+    border-collapse: collapse;
+    font-size: .85rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.local-preview__sheet td {
+    min-width: 4em;
+    max-width: 32em;
+    padding: 4px 10px;
+    vertical-align: top;
+    white-space: pre-wrap;
+    border: 1px solid rgb(var(--code-border));
+}
+
+.local-preview__sheet tr:first-child td {
+    font-weight: 600;
+    background: rgb(var(--code-bg));
+}
+
+.local-preview__image {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 48px - 52px - 48px);
+    margin: 0 auto;
+    border-radius: 6px;
+}
+
+/* docx-preview renders white "paper" pages; keep them readable in dark mode. */
+.local-preview--docx .docx-wrapper {
+    padding: 16px;
+    background: rgb(var(--code-bg));
+}
+
+.local-preview--docx .docx-wrapper > section.docx {
+    margin-bottom: 16px;
+    color: #000;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .12);
+}
+
 /* Dialogs share the card radius. */
 .v-dialog > .v-overlay__content > .v-card,
 .v-dialog > .v-overlay__content > form > .v-card {

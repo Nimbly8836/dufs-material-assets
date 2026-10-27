@@ -393,7 +393,21 @@
                                 </template>
                             </v-tooltip>
                             <v-tooltip
-                                v-if="previewableOfficeExts.has(p.ext) && p.size <= 10485760 && !isLocal && externalViewer"
+                                v-if="localPreviewTypeOf(p)"
+                                :text="t('actionViewFile')"
+                            >
+                                <template v-slot:activator="{ props }">
+                                    <v-btn
+                                        v-bind="props"
+                                        variant="plain"
+                                        :icon="['psd', 'tiff'].includes(localPreviewTypeOf(p)) ? '$mdiImageSearch' : '$mdiFileSearch'"
+                                        density="comfortable"
+                                        @click="openLocalPreview(p)"
+                                    ></v-btn>
+                                </template>
+                            </v-tooltip>
+                            <v-tooltip
+                                v-if="previewableOfficeExts.has(p.ext) && p.size <= 10485760 && !isLocal && externalViewer && !localPreviewTypeOf(p)"
                                 :text="t('actionViewOffice')"
                             >
                                 <template v-slot:activator="{ props }">
@@ -421,7 +435,7 @@
                                 </template>
                             </v-tooltip>
                             <v-tooltip
-                                v-if="previewablePhotopeaExts.has(p.ext) && externalViewer"
+                                v-if="previewablePhotopeaExts.has(p.ext) && externalViewer && !localPreviewTypeOf(p)"
                                 :text="t('actionViewPhotopea')"
                             >
                                 <template v-slot:activator="{ props }">
@@ -553,7 +567,13 @@
                                         @click="previewDialog = true; previewMode = 'pdf'; previewItem = p"
                                     ></v-list-item>
                                     <v-list-item
-                                        v-if="previewableOfficeExts.has(p.ext) && p.size <= 10485760 && !isLocal && externalViewer"
+                                        v-if="localPreviewTypeOf(p)"
+                                        :title="t('actionViewFile')"
+                                        :prepend-icon="['psd', 'tiff'].includes(localPreviewTypeOf(p)) ? '$mdiImageSearch' : '$mdiFileSearch'"
+                                        @click="openLocalPreview(p)"
+                                    ></v-list-item>
+                                    <v-list-item
+                                        v-if="previewableOfficeExts.has(p.ext) && p.size <= 10485760 && !isLocal && externalViewer && !localPreviewTypeOf(p)"
                                         :title="t('actionViewOffice')"
                                         prepend-icon="$mdiFileSearch"
                                         @click="previewDialog = true; previewMode = 'office'; previewItem = p"
@@ -565,7 +585,7 @@
                                         @click="previewDialog = true; previewMode = 'drawio'; previewItem = p"
                                     ></v-list-item>
                                     <v-list-item
-                                        v-if="previewablePhotopeaExts.has(p.ext) && externalViewer"
+                                        v-if="previewablePhotopeaExts.has(p.ext) && externalViewer && !localPreviewTypeOf(p)"
                                         :title="t('actionViewPhotopea')"
                                         prepend-icon="$mdiLayersSearch"
                                         @click="previewDialog = true; previewMode = 'photopea'; previewItem = p"
@@ -873,6 +893,44 @@
                 >
             </v-card-text>
             <v-card-text
+                v-else-if="previewMode === 'local'"
+                class="py-4 d-flex flex-column ga-3"
+                style="max-height:calc(100vh - 48px - 52px - 16px)"
+            >
+                <v-tabs
+                    v-if="localPreviewSheets.length > 1"
+                    v-model="localPreviewSheet"
+                    density="compact"
+                    color="primary"
+                    show-arrows
+                    class="flex-shrink-0"
+                >
+                    <v-tab v-for="(name, i) in localPreviewSheets" :key="i" :value="i">{{ name }}</v-tab>
+                </v-tabs>
+                <v-alert
+                    v-if="localPreviewTruncated"
+                    type="info"
+                    variant="tonal"
+                    density="compact"
+                    class="flex-shrink-0"
+                    :text="t('localPreviewTruncated', [LOCAL_SHEET_MAX_ROWS, LOCAL_SHEET_MAX_COLS])"
+                ></v-alert>
+                <v-alert
+                    v-if="localPreviewError"
+                    type="error"
+                    variant="tonal"
+                    density="compact"
+                    class="flex-shrink-0"
+                    :text="t('localPreviewFailed', [localPreviewError])"
+                ></v-alert>
+                <v-progress-linear v-if="localPreviewLoading" indeterminate color="primary" rounded class="flex-shrink-0"></v-progress-linear>
+                <div
+                    ref="localPreviewEl"
+                    class="local-preview"
+                    :class="`local-preview--${localPreviewTypeOf(previewItem)}`"
+                ></div>
+            </v-card-text>
+            <v-card-text
                 v-else-if="previewMode === 'office' || previewMode === 'drawio' || previewMode === 'photopea'"
                 class="py-4"
                 style="max-height:calc(100vh - 48px - 52px - 16px)"
@@ -1094,6 +1152,7 @@ import subsrt from 'subsrt';
 import * as jsmediatags from '../mami-chan/index.js';
 import Uploader from '../uploader.js';
 import CodeEditor from './code-editor.vue';
+import { localPreviewType, renderLocalPreview, SHEET_MAX_ROWS as LOCAL_SHEET_MAX_ROWS, SHEET_MAX_COLS as LOCAL_SHEET_MAX_COLS } from '../local-viewers.js';
 import NotDefFont from '../assets/AND-Regular.woff2?inline';
 import {
     getExt,
@@ -1174,6 +1233,18 @@ const display = useDisplay();
 
 const isLocal = isLocalAddress(location.hostname);
 const externalViewer = window.__DUFS_MATERIAL_CONFIG__?.externalViewer;
+// Local (in-browser) previews for docx/xlsx/psd/tiff. On by default: files are
+// only fetched from dufs and parsed in this browser. Not available in the
+// embedded build, which can only serve index.js/index.css.
+const localViewer = !__DUFS_EMBED__ && (window.__DUFS_MATERIAL_CONFIG__?.localViewer ?? true);
+const localViewerMaxSize = (window.__DUFS_MATERIAL_CONFIG__?.localViewerMaxSize ?? 50) * 1048576;
+/**
+ * @param {PathItem} p
+ * @returns {import('../local-viewers.js').LocalPreviewType | null}
+ */
+const localPreviewTypeOf = p => (
+    localViewer && p && !p.is_dir && p.size <= localViewerMaxSize ? localPreviewType(p.ext) : null
+);
 const preferPreview = window.__DUFS_MATERIAL_CONFIG__?.preferPreview;
 const codeHighlightMaxLines = window.__DUFS_MATERIAL_CONFIG__?.codeHighlightMaxLines;
 const codeHighlightMaxLineLength = window.__DUFS_MATERIAL_CONFIG__?.codeHighlightMaxLineLength;
@@ -1307,6 +1378,59 @@ const previewMode = ref('');
 /** @type {import('vue').Ref<PathItem>} */
 const previewItem = ref({});
 const previewContent = ref('');
+
+/** @type {import('vue').Ref<HTMLElement | null>} */
+const localPreviewEl = ref(null);
+const localPreviewLoading = ref(false);
+const localPreviewError = ref('');
+const localPreviewSheets = ref([]);
+const localPreviewSheet = ref(0);
+const localPreviewTruncated = ref(false);
+let localPreviewShowSheet = null;
+// Ignore results of a previous file if the user switched files meanwhile.
+let localPreviewToken = 0;
+
+const updateLocalPreview = async () => {
+    const p = previewItem.value;
+    const type = localPreviewTypeOf(p);
+    if (!type) return;
+    const token = ++localPreviewToken;
+    localPreviewError.value = '';
+    localPreviewSheets.value = [];
+    localPreviewSheet.value = 0;
+    localPreviewTruncated.value = false;
+    localPreviewShowSheet = null;
+    localPreviewLoading.value = true;
+    try {
+        await nextTick();
+        localPreviewEl.value?.replaceChildren();
+        const buffer = await dufsfetch(p.fullpath).then(r => r.arrayBuffer());
+        if (token !== localPreviewToken || !localPreviewEl.value) return;
+        const result = await renderLocalPreview(type, buffer, localPreviewEl.value);
+        if (token !== localPreviewToken) return;
+        if (result?.sheets) {
+            localPreviewShowSheet = result.show;
+            localPreviewSheets.value = result.sheets;
+            localPreviewTruncated.value = result.show(0).truncated;
+        }
+    } catch (e) {
+        if (token === localPreviewToken) localPreviewError.value = e?.message || String(e);
+    } finally {
+        if (token === localPreviewToken) localPreviewLoading.value = false;
+    }
+};
+
+watch(localPreviewSheet, i => {
+    if (localPreviewShowSheet) localPreviewTruncated.value = localPreviewShowSheet(i).truncated;
+});
+
+/** @param {PathItem} p */
+const openLocalPreview = p => {
+    previewMode.value = 'local';
+    previewItem.value = p;
+    previewDialog.value = true;
+    updateLocalPreview();
+};
 
 const editDialog = ref(false);
 const editWrap = ref(true);
@@ -1919,6 +2043,10 @@ const filenameClickPreview = (p, e) => {
     } else if (reviewableFontExts.has(p.ext)) {
         previewMode.value = 'font';
         previewItem.value = p;
+    } else if (localPreviewTypeOf(p)) {
+        openLocalPreview(p);
+        if (e) e.preventDefault();
+        return;
     } else if (externalViewer) {
         if (previewableOfficeExts.has(p.ext) && p.size <= 10485760 && !isLocal) {
             previewMode.value = 'office';

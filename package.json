@@ -13,15 +13,19 @@
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
+    "ag-psd": "^33.0.0",
+    "docx-preview": "^0.4.1",
     "is-local-address": "^2.4.4",
     "marked": "^18.1.1",
     "marked-highlight": "^2.2.4",
     "petite-vue-i18n": "^11.4.14",
     "prismjs": "^1.30.0",
     "subsrt": "^1.1.1",
+    "utif": "^3.1.0",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0",
-    "vuetify": "^4.2.6"
+    "vuetify": "^4.2.6",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
